@@ -5,6 +5,7 @@ Main application factory and configuration.
 """
 
 import hashlib
+import os
 import subprocess
 import time
 from contextlib import asynccontextmanager
@@ -99,6 +100,20 @@ def get_cache_bust_value() -> str:
     # If we have a base value (commit hash), use it
     if base_value:
         return base_value
+
+    # No git (e.g. Docker image): hash static file contents so edits always
+    # produce a new URL - the app version alone stays stale behind CDNs
+    try:
+        hasher = hashlib.sha256()
+        for root, _dirs, files in sorted(os.walk("static")):
+            for name in sorted(files):
+                file_path = os.path.join(root, name)
+                hasher.update(file_path.encode())
+                with open(file_path, "rb") as f:
+                    hasher.update(f.read())
+        return f"{settings.app_version}-{hasher.hexdigest()[:8]}"
+    except OSError:
+        pass
 
     # Fall back to app version
     if settings.app_version:
