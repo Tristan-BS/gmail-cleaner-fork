@@ -172,6 +172,12 @@ GmailCleaner.Scanner = {
                 typeLabel = `<span class="type-badge type-manual">Manual</span>`;
             }
 
+            // Unsubscribed before, but emails kept coming after the grace period
+            if (r.still_sending) {
+                const since = new Date(r.unsubscribed_at).toLocaleDateString();
+                typeLabel += `<span class="type-badge type-still-sending" title="Unsubscribed on ${since}, but still sending emails">Still sending</span>`;
+            }
+
             item.innerHTML = `
                 <label class="checkbox-wrapper result-checkbox">
                     <input type="checkbox" class="result-cb" data-index="${i}" data-type="${r.type || 'manual'}">
@@ -217,17 +223,18 @@ GmailCleaner.Scanner = {
                 btn.textContent = 'Open →';
                 btn.classList.remove('one-click');
                 btn.classList.add('manual');
-                btn.onclick = () => this.openLink(index);
+                // Auto-unsubscribe failed (link may be dead) - don't remember on open
+                btn.onclick = () => this.openLink(index, false);
                 btn.disabled = false;
             }
         } catch (error) {
             btn.textContent = 'Open →';
-            btn.onclick = () => this.openLink(index);
+            btn.onclick = () => this.openLink(index, false);
             btn.disabled = false;
         }
     },
 
-    openLink(index) {
+    openLink(index, remember = true) {
         const r = GmailCleaner.results[index];
         const btn = document.getElementById('unsub-' + index);
 
@@ -235,6 +242,15 @@ GmailCleaner.Scanner = {
         btn.textContent = 'Opened ↗';
         btn.classList.add('success');
         // Keep button clickable so user can re-open if needed
+
+        if (!remember) return;
+
+        // Remember sender so future scans hide it (fire-and-forget)
+        fetch('/api/unsubscribed', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ domain: r.domain })
+        }).catch(error => console.error('Error saving unsubscribed sender:', error));
     },
 
     toggleSelectAll() {

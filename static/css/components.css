@@ -422,6 +422,11 @@
     color: var(--primary-color);
 }
 
+.type-still-sending {
+    background: rgba(234, 67, 53, 0.15);
+    color: var(--danger-color);
+}
+
 /* Badge */
 .badge {
     margin-left: auto;

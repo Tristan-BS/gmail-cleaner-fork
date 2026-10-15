@@ -18,6 +18,7 @@ from app.services.gmail.helpers import (
     get_sender_info,
     get_subject,
 )
+from app.services.gmail.unsubscribed_store import get_unsubscribed, still_sending
 
 logger = logging.getLogger(__name__)
 
@@ -217,8 +218,24 @@ def scan_emails(limit: int = 500, filters: Optional[dict] = None):
             reverse=True,
         )
 
-        state.scan_results = sorted_results
+        # Hide senders already unsubscribed - unless they kept sending afterwards
+        unsubscribed = get_unsubscribed()
+        visible_results = []
+        hidden = 0
+        for r in sorted_results:
+            entry = unsubscribed.get(r["domain"].lower())
+            if entry:
+                if not still_sending(r["last_date"], entry["unsubscribed_at"]):
+                    hidden += 1
+                    continue
+                r["still_sending"] = True
+                r["unsubscribed_at"] = entry["unsubscribed_at"]
+            visible_results.append(r)
+
+        state.scan_results = visible_results
         state.scan_status["message"] = f"Found {len(state.scan_results)} subscriptions"
+        if hidden:
+            state.scan_status["message"] += f" ({hidden} already unsubscribed hidden)"
         state.scan_status["done"] = True
 
     except Exception as e:

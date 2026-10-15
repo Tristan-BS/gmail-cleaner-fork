@@ -31,3 +31,6 @@ coverage.xml
 
 # GitHub Copilot instructions (user specific)
 .github/copilot-instructions.md
+
+# Already subscribed data
+data/

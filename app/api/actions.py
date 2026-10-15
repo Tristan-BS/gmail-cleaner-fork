@@ -13,6 +13,7 @@ from app.models import (
     MarkReadRequest,
     DeleteScanRequest,
     UnsubscribeRequest,
+    MarkUnsubscribedRequest,
     DeleteEmailsRequest,
     DeleteBulkRequest,
     DownloadEmailsRequest,
@@ -22,6 +23,7 @@ from app.models import (
     ArchiveRequest,
     MarkImportantRequest,
 )
+from app.services.gmail.unsubscribed_store import mark_unsubscribed
 from app.services import (
     scan_emails,
     get_gmail_service,
@@ -78,12 +80,29 @@ async def api_sign_out():
 async def api_unsubscribe(request: UnsubscribeRequest):
     """Unsubscribe from a single sender."""
     try:
-        return unsubscribe_single(request.domain, request.link)
+        result = unsubscribe_single(request.domain, request.link)
+        if result.get("success"):
+            mark_unsubscribed(request.domain, "one-click")
+        return result
     except Exception as e:
         logger.exception("Error during unsubscribe")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to unsubscribe",
+        ) from e
+
+
+@router.post("/unsubscribed")
+async def api_mark_unsubscribed(request: MarkUnsubscribedRequest):
+    """Remember a sender as unsubscribed so future scans hide it."""
+    try:
+        mark_unsubscribed(request.domain, "manual")
+        return {"success": True}
+    except Exception as e:
+        logger.exception("Error saving unsubscribed sender")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to save unsubscribed sender",
         ) from e
 
 

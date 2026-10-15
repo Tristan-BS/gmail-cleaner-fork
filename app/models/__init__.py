@@ -5,6 +5,7 @@ from .schemas import (
     MarkReadRequest,
     DeleteScanRequest,
     UnsubscribeRequest,
+    MarkUnsubscribedRequest,
     DeleteEmailsRequest,
     DeleteBulkRequest,
     DownloadEmailsRequest,

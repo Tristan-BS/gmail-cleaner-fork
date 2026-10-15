@@ -138,6 +138,12 @@ class UnsubscribeRequest(BaseModel):
     link: str = Field(default="", description="Unsubscribe link URL")
 
 
+class MarkUnsubscribedRequest(BaseModel):
+    """Remember a sender as unsubscribed (e.g. after opening a manual link)."""
+
+    domain: str = Field(..., min_length=1, description="Sender domain")
+
+
 class DeleteEmailsRequest(BaseModel):
     """Request to delete emails from a sender."""
 
