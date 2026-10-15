@@ -1,0 +1,106 @@
+/* Dark Theme - only active when <html data-theme="dark">; light theme stays untouched */
+
+[data-theme="dark"] {
+    color-scheme: dark;
+    --primary-hover: #4285f4;
+    --bg-color: #131314;
+    --sidebar-bg: #131314;
+    --card-bg: #1e1f20;
+    --border-color: #3c4043;
+    --text-primary: #e8eaed;
+    --text-secondary: #bdc1c6;
+    --text-muted: #9aa0a6;
+    --hover-bg: #2a2b2d;
+    --active-bg: #1c3a5e;
+    --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.6), 0 1px 3px 1px rgba(0,0,0,0.3);
+    --shadow-md: 0 1px 3px 0 rgba(0,0,0,0.6), 0 4px 8px 3px rgba(0,0,0,0.3);
+
+    /* Litepicker date range picker */
+    --litepicker-container-months-color-bg: var(--card-bg);
+    --litepicker-container-months-box-shadow-color: rgba(0,0,0,0.6);
+    --litepicker-footer-color-bg: var(--card-bg);
+    --litepicker-footer-box-shadow-color: var(--border-color);
+    --litepicker-tooltip-color-bg: var(--card-bg);
+    --litepicker-month-header-color: var(--text-primary);
+    --litepicker-button-prev-month-color: var(--text-secondary);
+    --litepicker-button-next-month-color: var(--text-secondary);
+    --litepicker-button-prev-month-color-hover: #8ab4f8;
+    --litepicker-button-next-month-color-hover: #8ab4f8;
+    --litepicker-month-weekday-color: var(--text-muted);
+    --litepicker-day-color: var(--text-primary);
+    --litepicker-day-color-hover: #8ab4f8;
+    --litepicker-is-in-range-color: #1c3a5e;
+}
+
+/* Primary blue as text is too dark on dark surfaces - use the lighter dark-mode blue */
+[data-theme="dark"] .btn-secondary,
+[data-theme="dark"] .type-manual,
+[data-theme="dark"] .count-number,
+[data-theme="dark"] .setup-steps a,
+[data-theme="dark"] .nav-item.active {
+    color: #8ab4f8;
+}
+
+/* Light surfaces that are hardcoded in the base styles */
+[data-theme="dark"] .compose-btn:hover {
+    background: var(--hover-bg);
+}
+
+[data-theme="dark"] .url-box input {
+    background: var(--bg-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .info-note {
+    background: rgba(59, 130, 246, 0.12);
+    border-color: rgba(59, 130, 246, 0.35);
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .btn.btn-action.btn-important-action:not(:disabled) {
+    color: #facc15;
+}
+
+[data-theme="dark"] .btn.btn-action.btn-important-action:hover:not(:disabled) {
+    background: rgba(234, 179, 8, 0.15);
+}
+
+[data-theme="dark"] .btn.btn-action.btn-download-action:not(:disabled) {
+    color: #34d399;
+}
+
+[data-theme="dark"] .btn.btn-action.btn-download-action:hover:not(:disabled) {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+[data-theme="dark"] .btn.btn-action.btn-delete-action:hover:not(:disabled) {
+    background: rgba(234, 67, 53, 0.15);
+}
+
+/* Theme toggle button (header, right of Sign Out) */
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: background 0.2s;
+}
+
+.theme-toggle:hover {
+    background: var(--hover-bg);
+}
+
+.theme-toggle .icon-sun,
+[data-theme="dark"] .theme-toggle .icon-moon {
+    display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+    display: block;
+}
